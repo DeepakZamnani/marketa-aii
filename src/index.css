@@ -7,6 +7,10 @@
   font-family:ranade;
   src: url(./assets/fonts/ranade.ttf);
 }
+@font-face {
+  font-family:ccc;
+  src: url(./assets/fonts/CCC.ttf);
+}
 body{
   background-color:black;
 }

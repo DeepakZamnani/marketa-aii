@@ -1,206 +1,394 @@
-'use client';
-
-import React, { useRef, useEffect, useState } from 'react';
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useSpring,
-  useInView,
-} from 'framer-motion';
-import { Zap, Brain, Target, Sparkles, ArrowRight } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { Brain, Zap, Target, BarChart3, Sparkles, ArrowRight } from 'lucide-react';
 
 const features = [
-  { icon: Brain, title: 'Neural Audience Engine', desc: 'AI maps behavior, intent, and emotion in real-time.' },
-  { icon: Zap, title: 'Quantum Campaign Core', desc: 'Split-second optimization across 10+ platforms.' },
-  { icon: Target, title: 'Hyper-Precision Targeting', desc: '1:1 personalization at scale — no waste.' },
-  { icon: Sparkles, title: 'Creative Synth', desc: 'Generate 1000+ ad variants in seconds.' },
-];
-
-const stats = [
-  { value: 98, suffix: '%', label: 'Accuracy' },
-  { value: 3.2, suffix: 'x', label: 'ROAS Lift' },
-  { value: 47, suffix: '%', label: 'Faster Launch' },
+  {
+    icon: Brain,
+    title: "AI-Powered Insights",
+    desc: "Deep learning analyzes your audience, content, and performance in real time.",
+    number: "01"
+  },
+  {
+    icon: Zap,
+    title: "Instant Campaign Optimization",
+    desc: "Auto-adjust budgets, creatives, and targeting for maximum ROI.",
+    number: "02"
+  },
+  {
+    icon: Target,
+    title: "Hyper-Personalized Ads",
+    desc: "Generate thousands of ad variants tailored to each user segment.",
+    number: "03"
+  },
+  {
+    icon: BarChart3,
+    title: "Predictive Analytics",
+    desc: "Forecast trends, churn, and revenue with 95%+ accuracy.",
+    number: "04"
+  },
+  {
+    icon: Sparkles,
+    title: "Creative Automation",
+    desc: "AI writes copy, designs visuals, and A/B tests — all in seconds.",
+    number: "05"
+  },
 ];
 
 export default function Overview() {
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start end', 'end start'],
-  });
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
-  const y = useTransform(smoothProgress, [0, 1], [-100, 100]);
-
-  return (
-    <section
-      ref={containerRef}
-      className="relative py-32 px-6 overflow-hidden bg-gradient-to-b from-[#f8f9fa] to-white"
-    >
-      {/* ---------- Floating Orbs ---------- */}
-      <FloatingOrbs />
-
-      <div className="relative z-10 max-w-7xl mx-auto">
-
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-20"
-        >
-          <h2 className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700 mb-4">
-            Engineered for Growth
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Autonomous marketing intelligence that thinks, adapts, and scales with you.
-          </p>
-        </motion.div>
-
-        {/* Feature Cards */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-20">
-          {features.map((f, i) => (
-            <TiltCard key={i} {...f} index={i} />
-          ))}
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-6 max-w-4xl mx-auto">
-          {stats.map((s, i) => (
-            <StatCounter key={i} {...s} delay={i * 0.2} />
-          ))}
-        </div>
-
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.6 }}
-          className="mt-20 text-center"
-        >
-          <a
-            href="#"
-            className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold text-lg shadow-2xl overflow-hidden"
-          >
-            <span className="relative z-10 flex items-center">
-              Launch Your Co-Pilot
-              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </span>
-            <span className="absolute inset-0 bg-gradient-to-r from-orange-600 to-red-600 opacity-0 group-hover:opacity-100 transition-opacity" />
-          </a>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- 3D Tilt Card ---------- */
-function TiltCard({ icon: Icon, title, desc, index }) {
-  const ref = useRef(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const inView = useInView(ref, { once: true });
-
-  const handleMove = (e) => {
-    const r = ref.current.getBoundingClientRect();
-    const x = (e.clientX - r.left - r.width / 2) / 15;
-    const y = (e.clientY - r.top - r.height / 2) / 15;
-    setTilt({ x, y });
-  };
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 60 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ delay: index * 0.15, duration: 0.8 }}
-      onMouseMove={handleMove}
-      onMouseLeave={() => setTilt({ x: 0, y: 0 })}
-      style={{
-        rotateX: tilt.y,
-        rotateY: -tilt.x,
-        transformStyle: 'preserve-3d',
-        perspective: 1000,
-      }}
-      className="relative group"
-    >
-      <div className="absolute inset-0 bg-gradient-to-br from-orange-400/20 to-transparent rounded-3xl blur-xl group-hover:blur-2xl transition-all" />
-      <div className="relative bg-white/80 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-xl h-full">
-        <div className="inline-flex p-4 rounded-2xl bg-gradient-to-br from-orange-100 to-orange-50 mb-6">
-          <Icon className="w-8 h-8 text-orange-600" />
-        </div>
-        <h3 className="text-2xl font-bold text-gray-900 mb-3">{title}</h3>
-        <p className="text-gray-600 leading-relaxed">{desc}</p>
-      </div>
-    </motion.div>
-  );
-}
-
-/* ---------- Stat Counter ---------- */
-function StatCounter({ value, suffix, label, delay }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true });
+  const sectionRef = useRef(null);
+  const featuresRef = useRef([]);
+  const titleRef = useRef(null);
+  const subtitleRef = useRef(null);
+  const lineRefs = useRef([]);
+  const iconRefs = useRef([]);
+  const numberRefs = useRef([]);
+  const orbRef = useRef(null);
+  const orb2Ref = useRef(null);
+  const ctaRef = useRef(null);
+  const progressRef = useRef(null);
 
   useEffect(() => {
-    if (!inView) return;
-    const steps = 60;
-    const inc = value / steps;
-    let cur = 0;
-    const timer = setInterval(() => {
-      cur += inc;
-      if (cur >= value) {
-        setCount(value);
-        clearInterval(timer);
-      } else setCount(cur);
-    }, 30);
-    return () => clearInterval(timer);
-  }, [inView, value]);
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js';
+    script.async = true;
+    
+    script.onload = () => {
+      const gsapScript2 = document.createElement('script');
+      gsapScript2.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js';
+      gsapScript2.async = true;
+      
+      gsapScript2.onload = () => {
+        const { gsap } = window;
+        const { ScrollTrigger } = window;
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Title animation with stagger
+        gsap.from(titleRef.current?.children || [], {
+          scrollTrigger: {
+            trigger: titleRef.current,
+            start: 'top 80%',
+            end: 'top 40%',
+            scrub: 1,
+          },
+          opacity: 0,
+          y: 100,
+          stagger: 0.2,
+          ease: 'power3.out'
+        });
+
+        // Subtitle fade and blur
+        gsap.from(subtitleRef.current, {
+          scrollTrigger: {
+            trigger: subtitleRef.current,
+            start: 'top 80%',
+            end: 'top 50%',
+            scrub: 1,
+          },
+          opacity: 0,
+          filter: 'blur(10px)',
+          y: 30
+        });
+
+        // Features with complex animations
+        featuresRef.current.forEach((feature, index) => {
+          if (feature) {
+            // Feature container scale and fade
+            gsap.from(feature, {
+              scrollTrigger: {
+                trigger: feature,
+                start: 'top 90%',
+                end: 'top 40%',
+                scrub: 1.5,
+              },
+              opacity: 0,
+              scale: 0.8,
+              x: index % 2 === 0 ? -100 : 100,
+              rotation: index % 2 === 0 ? -5 : 5,
+            });
+
+            // Pin each feature while scrolling
+            ScrollTrigger.create({
+              trigger: feature,
+              start: 'top 30%',
+              end: 'bottom 20%',
+              pin: false,
+              onEnter: () => {
+                gsap.to(feature, {
+                  scale: 1.02,
+                  duration: 0.3,
+                  ease: 'power2.out'
+                });
+              },
+              onLeave: () => {
+                gsap.to(feature, {
+                  scale: 1,
+                  duration: 0.3,
+                  ease: 'power2.out'
+                });
+              },
+              onEnterBack: () => {
+                gsap.to(feature, {
+                  scale: 1.02,
+                  duration: 0.3,
+                  ease: 'power2.out'
+                });
+              },
+              onLeaveBack: () => {
+                gsap.to(feature, {
+                  scale: 1,
+                  duration: 0.3,
+                  ease: 'power2.out'
+                });
+              }
+            });
+          }
+        });
+
+        // Numbers with rotation and scale
+        numberRefs.current.forEach((num, index) => {
+          if (num) {
+            gsap.from(num, {
+              scrollTrigger: {
+                trigger: num,
+                start: 'top 80%',
+                end: 'top 30%',
+                scrub: 2,
+              },
+              rotation: 180,
+              scale: 0,
+              opacity: 0,
+              ease: 'back.out'
+            });
+          }
+        });
+
+        // Icons with spring animation
+        iconRefs.current.forEach((icon, index) => {
+          if (icon) {
+            gsap.from(icon, {
+              scrollTrigger: {
+                trigger: icon,
+                start: 'top 80%',
+                end: 'top 40%',
+                scrub: 1,
+              },
+              scale: 0,
+              rotation: -180,
+              ease: 'elastic.out(1, 0.5)'
+            });
+
+            // Continuous rotation on scroll
+            gsap.to(icon, {
+              scrollTrigger: {
+                trigger: icon,
+                start: 'top 60%',
+                end: 'bottom 20%',
+                scrub: 2,
+              },
+              rotation: 360,
+            });
+          }
+        });
+
+        // Lines grow on scroll
+        lineRefs.current.forEach((line, index) => {
+          if (line) {
+            gsap.from(line, {
+              scrollTrigger: {
+                trigger: line,
+                start: 'top 85%',
+                end: 'top 50%',
+                scrub: 1.5,
+              },
+              scaleX: 0,
+              transformOrigin: 'left center',
+            });
+          }
+        });
+
+        // Floating orbs with parallax
+        if (orbRef.current) {
+          gsap.to(orbRef.current, {
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 1.5,
+            },
+            y: -300,
+            x: 100,
+            rotation: 180,
+            scale: 1.5,
+          });
+        }
+
+        if (orb2Ref.current) {
+          gsap.to(orb2Ref.current, {
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 2,
+            },
+            y: 400,
+            x: -150,
+            rotation: -180,
+            scale: 0.8,
+          });
+        }
+
+        // Progress bar
+        if (progressRef.current) {
+          gsap.to(progressRef.current, {
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top top',
+              end: 'bottom bottom',
+              scrub: 0.5,
+            },
+            scaleY: 1,
+            transformOrigin: 'top center',
+          });
+        }
+
+        // CTA with reveal
+        if (ctaRef.current) {
+          gsap.from(ctaRef.current, {
+            scrollTrigger: {
+              trigger: ctaRef.current,
+              start: 'top 90%',
+              end: 'top 50%',
+              scrub: 1,
+            },
+            opacity: 0,
+            y: 80,
+            scale: 0.8,
+          });
+        }
+      };
+      
+      document.body.appendChild(gsapScript2);
+    };
+    
+    document.body.appendChild(script);
+
+    return () => {
+      if (window.ScrollTrigger) {
+        window.ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      }
+    };
+  }, []);
 
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, scale: 0.8 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ delay }}
-      className="text-center"
-    >
-      <div className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-orange-600">
-        {count.toFixed(value % 1 ? 1 : 0)}{suffix}
+    <section ref={sectionRef} className="relative py-32 px-6 bg-white overflow-hidden">
+      
+      {/* Progress Bar */}
+      <div className="fixed left-8 top-1/2 -translate-y-1/2 z-50 hidden lg:block">
+        <div className="w-1 h-64 bg-gray-200 rounded-full overflow-hidden">
+          <div ref={progressRef} className="w-full h-full bg-gradient-to-b from-orange-500 to-orange-600 origin-top scale-y-0" />
+        </div>
       </div>
-      <div className="mt-2 text-sm font-medium text-gray-600 uppercase tracking-wider">
-        {label}
-      </div>
-    </motion.div>
-  );
-}
 
-/* ---------- Floating Orbs ---------- */
-function FloatingOrbs() {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(5)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-64 h-64 rounded-full opacity-20 blur-3xl"
-          style={{
-            background:
-              i % 2 === 0
-                ? 'radial-gradient(circle, #FF6B35, transparent)'
-                : 'radial-gradient(circle, #E65100, transparent)',
-            left: `${20 + i * 15}%`,
-            top: `${10 + i * 20}%`,
-          }}
-          animate={{ y: [0, -30, 0], x: [0, 15, 0], scale: [1, 1.2, 1] }}
-          transition={{
-            duration: 8 + i,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: i * 0.5,
-          }}
-        />
-      ))}
-    </div>
+      {/* Floating Orbs with Parallax */}
+      <div ref={orbRef} className="absolute top-20 right-10 w-96 h-96 bg-gradient-to-br from-orange-200/40 to-orange-400/30 rounded-full blur-3xl pointer-events-none" />
+      <div ref={orb2Ref} className="absolute bottom-40 left-10 w-80 h-80 bg-gradient-to-tr from-gray-200/50 to-gray-300/30 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-6xl mx-auto relative z-10">
+        
+        {/* Header */}
+        <div className="mb-40 text-center">
+          <div className="inline-block mb-8">
+            <span className="text-sm font-medium tracking-widest text-orange-600 uppercase">How It Works</span>
+          </div>
+          <div ref={titleRef}>
+            <h2 className="text-6xl md:text-8xl font-bold text-gray-900 mb-4 tracking-tight leading-none">
+              Intelligence
+            </h2>
+            <h2 className="text-6xl md:text-8xl font-bold tracking-tight leading-none">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600">Redefined</span>
+            </h2>
+          </div>
+          <p ref={subtitleRef} className="text-xl text-gray-500 max-w-xl mx-auto font-light mt-8">
+            Where cutting-edge AI meets human creativity
+          </p>
+        </div>
+
+        {/* Features List */}
+        <div className="space-y-32">
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              ref={el => featuresRef.current[index] = el}
+              className={`flex flex-col md:flex-row items-start gap-16 ${
+                index % 2 === 1 ? 'md:flex-row-reverse' : ''
+              }`}
+            >
+              {/* Number & Icon Side */}
+              <div className="flex-shrink-0 w-full md:w-1/3">
+                <div className="flex items-center gap-8">
+                  <span 
+                    ref={el => numberRefs.current[index] = el}
+                    className="text-9xl font-bold text-black leading-none"
+                  >
+                    {feature.number}
+                  </span>
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-orange-500/20 blur-2xl rounded-full animate-pulse" />
+                    <div 
+                      ref={el => iconRefs.current[index] = el}
+                      className="relative w-20 h-20 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-2xl"
+                    >
+                      <feature.icon className="w-10 h-10 text-white" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Content Side */}
+              <div className="flex-1 pt-8">
+                <h3 className="text-4xl font-bold text-gray-900 mb-6 tracking-tight">
+                  {feature.title}
+                </h3>
+                <p className="text-xl text-gray-600 leading-relaxed font-light mb-8">
+                  {feature.desc}
+                </p>
+                
+                {/* Accent Line */}
+                <div 
+                  ref={el => lineRefs.current[index] = el}
+                  className="h-1 w-32 bg-gradient-to-r from-orange-500 via-orange-400 to-transparent origin-left rounded-full"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom CTA */}
+        <div ref={ctaRef} className="mt-40 text-center">
+          <div className="inline-flex flex-col items-center gap-8">
+            <div className="w-px h-20 bg-gradient-to-b from-transparent via-orange-400 to-transparent" />
+            <a
+              href="#get-started"
+              className="group relative inline-flex items-center gap-3 px-12 py-6 bg-gray-900 text-white rounded-full font-semibold text-lg overflow-hidden transition-all duration-500 hover:gap-5 hover:shadow-2xl hover:shadow-orange-500/20"
+            >
+              <span className="absolute inset-0 bg-gradient-to-r from-orange-500 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <span className="relative">Start Free Trial</span>
+              <ArrowRight className="relative w-6 h-6 transition-transform group-hover:translate-x-2" />
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Subtle Grid Background */}
+      <div className="absolute inset-0 opacity-[0.015] pointer-events-none"
+           style={{
+             backgroundImage: `
+               linear-gradient(to right, #000 1px, transparent 1px),
+               linear-gradient(to bottom, #000 1px, transparent 1px)
+             `,
+             backgroundSize: '80px 80px'
+           }}
+      />
+    </section>
   );
 }
