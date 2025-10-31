@@ -1,0 +1,12 @@
+@import "tailwindcss";
+@font-face {
+  font-family: unbounded;
+  src: url(./assets/fonts/ubounded.ttf);
+}
+@font-face {
+  font-family:ranade;
+  src: url(./assets/fonts/ranade.ttf);
+}
+body{
+  background-color:black;
+}
