@@ -10,10 +10,12 @@ import ComingSoon from '../components/ComingSoon'
 const Home = () => {
   return (
     <div>
-     {/* <Navbar/> */}
+     <Navbar/>
     <Hero/>
     {/* <Hero/> */}
-     <ComingSoon/>
+   {/* <Overview/> */}
+   {/* <Features/> */}
+   <ComingSoon/>
     </div>
   )
 }

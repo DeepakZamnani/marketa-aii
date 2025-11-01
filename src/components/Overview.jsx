@@ -305,7 +305,9 @@ export default function Overview() {
 
     return () => clearTimeout(timer);
   }, [gsapReady]);
-
+ const openApp = () => {
+    window.open('https://marketa-ai.vercel.app', '_blank', 'noopener,noreferrer');
+  };
   return (
     <section ref={sectionRef} className="relative py-32 px-6 bg-white overflow-hidden">
       

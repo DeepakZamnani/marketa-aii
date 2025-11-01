@@ -9,7 +9,9 @@ export default function Navbar() {
   const ctaRef = useRef(null);
   const indicatorRef = useRef(null);
   const bgRef = useRef(null);
-
+//  const openApp = () => {
+//     window.open('marketa-ai.vercel.app', '_blank', 'noopener,noreferrer');
+//   };
   const navLinks = ['Overview', 'Features', 'Pricing', 'About'];
 
   // Track ScrollTriggers and entrance timeline for cleanup
@@ -147,10 +149,12 @@ export default function Navbar() {
           scrollTriggers.current.push(st);
         }
 
-        // Links position change with stagger on scroll (no fade, separate staggered movement up to hide)
+        // Links hide with stagger on scroll
         if (linkRefs.current.length > 0) {
           const tween = gsap.to(linkRefs.current, {
-            y: -100,
+            opacity: 0,
+            y: -20,
+            scale: 0.8,
             stagger: 0.05,
             ease: 'none'
           });
@@ -246,17 +250,14 @@ export default function Navbar() {
 
           {/* Right Side - Login + CTA */}
           <div className="flex items-center gap-4">
-            <a
-              href="#login"
-              className="text-gray-300 hover:text-white text-sm font-medium transition-colors"
-            >
-              Login
-            </a>
+          
 
             {/* CTA Button */}
             <div ref={ctaRef} className="opacity-0">  {/* Initial CSS hide */}
               <a
-                href="#get-started"
+                href="https://marketa-ai.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group relative inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#FF6B35] to-[#E65100] text-white rounded-full font-semibold text-sm overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-orange-500/30"
               >
                 <span className="absolute inset-0 bg-gradient-to-r from-[#E65100] to-[#C43C00] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

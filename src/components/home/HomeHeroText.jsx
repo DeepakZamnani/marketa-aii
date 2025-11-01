@@ -12,11 +12,12 @@ const HomeHeroText = () => {
   const subtitle2Ref = useRef(null);
 
   useEffect(() => {
-    // Split title into individual letters
     const titleText = 'MARKETA AI';
     const titleElement = titleRef.current;
+    const isMobile = window.innerWidth < 768;
+    const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
     
-    // Clear and create letter spans
+    // Clear and create letter spans with improved styling
     titleElement.innerHTML = '';
     lettersRef.current = [];
     
@@ -24,11 +25,12 @@ const HomeHeroText = () => {
       const span = document.createElement('span');
       span.textContent = char === ' ' ? '\u00A0' : char;
       span.style.display = 'inline-block';
-      span.className = 'font-[unbounded]';
+      span.className = 'font-[unbounded] text-[8vw] sm:text-[4.5vw]';
       span.style.transformOrigin = 'center center';
       titleElement.appendChild(span);
       lettersRef.current.push(span);
       
+      // Highlight first letter
       if (index === 0) {
         span.style.color = '#FF6B35';
       } else {
@@ -36,7 +38,7 @@ const HomeHeroText = () => {
       }
     });
 
-    // Set initial state for all elements
+    // Set initial state with smooth appearance
     gsap.set(lettersRef.current, {
       x: 0,
       y: 0,
@@ -52,37 +54,44 @@ const HomeHeroText = () => {
       filter: 'blur(0px)'
     });
 
-    // Create main scroll timeline
+    // Responsive animation parameters
+    const animationConfig = {
+      glitchIntensity: isMobile ? 3 : 5,
+      blurAmount: isMobile ? '1.5px' : '2px',
+      baseDistance: isMobile ? 180 : isTablet ? 300 : 400,
+      maxDistance: isMobile ? 350 : isTablet ? 500 : 600,
+      particleCount: isMobile ? 10 : isTablet ? 15 : 20,
+      subtitleOffsetY: isMobile ? 50 : isTablet ? 80 : 100,
+      subtitleOffsetX: isMobile ? 60 : isTablet ? 100 : 150,
+    };
+
+    // Create main scroll timeline with smoother scrub
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: document.body,
         start: 'top top',
-        end: '+=400',
-        scrub: 0.5,
+        end: '+=500',
+        scrub: 0.8,
         pin: false,
       }
     });
 
-    // Phase 1: Letters start glitching and vibrating
+    // Phase 1: Gentle glitch effect
     lettersRef.current.forEach((letter, index) => {
       tl.to(letter, {
-        x: () => gsap.utils.random(-5, 5),
-        y: () => gsap.utils.random(-5, 5),
-        filter: 'blur(2px)',
+        x: () => gsap.utils.random(-animationConfig.glitchIntensity, animationConfig.glitchIntensity),
+        y: () => gsap.utils.random(-animationConfig.glitchIntensity, animationConfig.glitchIntensity),
+        filter: animationConfig.blurAmount,
         duration: 0.1,
       }, index * 0.01);
     });
 
-    // Phase 2: Letters explode with responsive distances
-    const isMobile = window.innerWidth < 768;
-    const baseDistance = isMobile ? 200 : 400;
-    const maxDistance = isMobile ? 400 : 600;
-    
+    // Phase 2: Explosive letter animation
     lettersRef.current.forEach((letter, index) => {
       const angle = (index / lettersRef.current.length) * Math.PI * 2;
-      const distance = gsap.utils.random(baseDistance, maxDistance);
-      const randomX = Math.cos(angle) * distance + gsap.utils.random(-50, 50);
-      const randomY = Math.sin(angle) * distance + gsap.utils.random(-50, 50);
+      const distance = gsap.utils.random(animationConfig.baseDistance, animationConfig.maxDistance);
+      const randomX = Math.cos(angle) * distance + gsap.utils.random(-30, 30);
+      const randomY = Math.sin(angle) * distance + gsap.utils.random(-30, 30);
       const randomRotation = gsap.utils.random(-720, 720);
       const randomScale = gsap.utils.random(0.1, 0.4);
       
@@ -98,14 +107,12 @@ const HomeHeroText = () => {
       }, 0.3 + index * 0.015);
     });
 
-    // Subtitles: Glitch and split apart with responsive values
-    const subtitleOffset = isMobile ? 80 : 150;
-    
+    // Subtitle animations with responsive values
     tl.to(subtitleRef.current, {
       opacity: 0,
-      y: isMobile ? -50 : -80,
-      x: isMobile ? -80 : -150,
-      rotation: -15,
+      y: -animationConfig.subtitleOffsetY,
+      x: -animationConfig.subtitleOffsetX,
+      rotation: -12,
       scale: 0.7,
       filter: 'blur(6px)',
       ease: 'power2.in',
@@ -113,23 +120,23 @@ const HomeHeroText = () => {
 
     tl.to(subtitle2Ref.current, {
       opacity: 0,
-      y: isMobile ? 80 : 120,
-      x: isMobile ? 100 : 180,
-      rotation: 20,
+      y: animationConfig.subtitleOffsetY * 1.2,
+      x: animationConfig.subtitleOffsetX * 1.2,
+      rotation: 15,
       scale: 0.6,
       filter: 'blur(6px)',
       ease: 'power2.in',
     }, 0.45);
 
-    // Add particle effect
-    const particleCount = isMobile ? 12 : 20;
+    // Particle system
     const particles = [];
+    const particleSize = isMobile ? '2px' : '3px';
     
-    for (let i = 0; i < particleCount; i++) {
+    for (let i = 0; i < animationConfig.particleCount; i++) {
       const particle = document.createElement('div');
       particle.style.position = 'absolute';
-      particle.style.width = isMobile ? '3px' : '4px';
-      particle.style.height = isMobile ? '3px' : '4px';
+      particle.style.width = particleSize;
+      particle.style.height = particleSize;
       particle.style.backgroundColor = 'currentColor';
       particle.style.borderRadius = '50%';
       particle.style.top = '50%';
@@ -141,10 +148,13 @@ const HomeHeroText = () => {
       gsap.set(particle, { opacity: 0, scale: 0 });
     }
 
-    // Animate particles
+    // Animate particles with stagger
     particles.forEach((particle, index) => {
       const angle = (index / particles.length) * Math.PI * 2;
-      const distance = gsap.utils.random(isMobile ? 150 : 200, isMobile ? 300 : 400);
+      const distance = gsap.utils.random(
+        animationConfig.baseDistance * 0.75, 
+        animationConfig.maxDistance * 0.75
+      );
       const x = Math.cos(angle) * distance;
       const y = Math.sin(angle) * distance;
       
@@ -163,6 +173,7 @@ const HomeHeroText = () => {
       }, 0.7 + index * 0.01);
     });
 
+    // Cleanup function
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
       particles.forEach(p => p.remove());
@@ -170,23 +181,39 @@ const HomeHeroText = () => {
   }, []);
 
   return (
-    <div ref={containerRef} className="h-screen w-screen flex items-center justify-center text-center relative overflow-hidden px-4">
-      <div className="max-w-full">
+    <div 
+      ref={containerRef} 
+      className="h-screen w-screen flex items-center justify-center text-center relative overflow-hidden px-4 sm:px-6 md:px-8"
+    >
+      <div className="max-w-7xl w-full">
+        {/* Main Title */}
         <div 
           ref={titleRef}
-          className="font-bold text-[10vw] sm:text-[8vw] md:text-[6.5vw] lg:text-[5.5vw] uppercase leading-tight relative"
-          style={{ letterSpacing: '0.02em' }}
-        >
-        </div>
+          className="font-bold text-[12vw] sm:text-[10vw] md:text-[8vw] lg:text-[6.5vw] xl:text-[5.5vw] uppercase leading-none relative mb-4 sm:mb-6"
+          style={{ 
+            letterSpacing: '0.05em',
+            fontWeight: '800'
+          }}
+        />
+        
+        {/* Subtitle 1 */}
         <div 
           ref={subtitleRef}
-          className="text-[5vw] sm:text-[4vw] md:text-[3.5vw] lg:text-[2.5vw] uppercase mt-2 sm:mt-3"
+          className="text-[6vw] sm:text-[5vw] md:text-[4vw] lg:text-[3vw] xl:text-[2.5vw] uppercase tracking-wider font-semibold text-gray-200 mb-2 sm:mb-3"
+          style={{ 
+            letterSpacing: '0.1em'
+          }}
         >
           Your AI Based
         </div>
+        
+        {/* Subtitle 2 */}
         <div 
           ref={subtitle2Ref}
-          className="text-[3.5vw] sm:text-[2.5vw] md:text-[2vw] lg:text-[1.25vw] uppercase mt-1 sm:mt-2"
+          className="text-[4vw] sm:text-[3vw] md:text-[2.5vw] lg:text-[1.8vw] xl:text-[1.5vw] uppercase tracking-widest font-light text-gray-300"
+          style={{ 
+            letterSpacing: '0.15em'
+          }}
         >
           Marketing Co-Pilot
         </div>
