@@ -8,8 +8,21 @@
   src: url(./assets/fonts/ranade.ttf);
 }
 @font-face {
-  font-family:ccc;
-  src: url(./assets/fonts/CCC.ttf);
+  font-family:gavoline;
+  src: url(./assets/fonts/Gavoline.otf);
+}
+@font-face {
+  font-family:klaft;
+  src: url(./assets/fonts/KlaftRegular-2vR5v.otf);
+}@font-face {
+  font-family:mavinea;
+  src: url(./assets/fonts/Mavinea-Regular.otf);
+}@font-face {
+  font-family:nectron;
+  src: url(./assets/fonts/Nectron-Regular.otf);
+}@font-face {
+  font-family:brighten;
+  src: url(./assets/fonts/Brighten.ttf);
 }
 body{
   background-color:black;

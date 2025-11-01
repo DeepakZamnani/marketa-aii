@@ -238,6 +238,11 @@ const HomeHeroText = () => {
       span.style.transformOrigin = 'center center';
       titleElement.appendChild(span);
       lettersRef.current.push(span);
+       if (index === 0) {
+        span.style.color = '#FF6B35';
+      } else {
+        span.style.color = '#ffffff';
+      }
     });
 
     // Set initial state for all elements
@@ -261,7 +266,7 @@ const HomeHeroText = () => {
       scrollTrigger: {
         trigger: document.body,
         start: 'top top',
-        end: '+=300',
+        end: '+=500',
         scrub: 0.5,
         pin: false,
       }
@@ -376,13 +381,13 @@ const HomeHeroText = () => {
         </div>
         <div 
           ref={subtitleRef}
-          className="text-[3vw] uppercase"
+          className="text-[2.5vw] uppercase "
         >
           Your AI Based
         </div>
         <div 
           ref={subtitle2Ref}
-          className="text-[3vw] uppercase"
+          className="text-[1.25vw] uppercase "
         >
           Marketing Co-Pilot
         </div>

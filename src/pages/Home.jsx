@@ -5,13 +5,15 @@ import Hero from '../components/home/Hero'
 import Solutions from './Solutions'
 import Navbar from '../components/Navbar'
 import Overview from '../components/Overview'
+import Features from '../components/Features'
+import ComingSoon from '../components/ComingSoon'
 const Home = () => {
   return (
     <div>
-     <Navbar/>
+     {/* <Navbar/> */}
     <Hero/>
     {/* <Hero/> */}
-   <Overview/>
+     <ComingSoon/>
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Brain, Zap, Target, BarChart3, Sparkles, ArrowRight } from 'lucide-react';
 
 const features = [
@@ -35,6 +35,7 @@ const features = [
 ];
 
 export default function Overview() {
+  const [gsapReady, setGsapReady] = useState(false);
   const sectionRef = useRef(null);
   const featuresRef = useRef([]);
   const titleRef = useRef(null);
@@ -47,6 +48,7 @@ export default function Overview() {
   const ctaRef = useRef(null);
   const progressRef = useRef(null);
 
+  // Load GSAP scripts
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js';
@@ -58,12 +60,40 @@ export default function Overview() {
       gsapScript2.async = true;
       
       gsapScript2.onload = () => {
-        const { gsap } = window;
-        const { ScrollTrigger } = window;
-        gsap.registerPlugin(ScrollTrigger);
+        if (window.gsap && window.ScrollTrigger) {
+          window.gsap.registerPlugin(window.ScrollTrigger);
+          setGsapReady(true);
+        }
+      };
+      
+      document.body.appendChild(gsapScript2);
+    };
+    
+    document.body.appendChild(script);
 
-        // Title animation with stagger
-        gsap.from(titleRef.current?.children || [], {
+    return () => {
+      // Cleanup function remains the same
+      if (window.ScrollTrigger) {
+        window.ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      }
+      if (window.gsap) {
+        window.gsap.killTweensOf("*");
+      }
+    };
+  }, []);
+
+  // Initialize animations after GSAP is ready
+  useEffect(() => {
+    if (!gsapReady || !window.gsap || !window.ScrollTrigger) return;
+
+    const { gsap } = window;
+    const { ScrollTrigger } = window;
+
+    // Small delay to ensure DOM is fully ready
+    const timer = setTimeout(() => {
+      // Title animation with stagger
+      if (titleRef.current && titleRef.current.children.length > 0) {
+        gsap.from(titleRef.current.children, {
           scrollTrigger: {
             trigger: titleRef.current,
             start: 'top 80%',
@@ -75,8 +105,10 @@ export default function Overview() {
           stagger: 0.2,
           ease: 'power3.out'
         });
+      }
 
-        // Subtitle fade and blur
+      // Subtitle fade and blur
+      if (subtitleRef.current) {
         gsap.from(subtitleRef.current, {
           scrollTrigger: {
             trigger: subtitleRef.current,
@@ -88,196 +120,191 @@ export default function Overview() {
           filter: 'blur(10px)',
           y: 30
         });
+      }
 
-        // Features with complex animations
-        featuresRef.current.forEach((feature, index) => {
-          if (feature) {
-            // Feature container scale and fade
-            gsap.from(feature, {
-              scrollTrigger: {
-                trigger: feature,
-                start: 'top 90%',
-                end: 'top 40%',
-                scrub: 1.5,
-              },
-              opacity: 0,
-              scale: 0.8,
-              x: index % 2 === 0 ? -100 : 100,
-              rotation: index % 2 === 0 ? -5 : 5,
-            });
-
-            // Pin each feature while scrolling
-            ScrollTrigger.create({
-              trigger: feature,
-              start: 'top 30%',
-              end: 'bottom 20%',
-              pin: false,
-              onEnter: () => {
-                gsap.to(feature, {
-                  scale: 1.02,
-                  duration: 0.3,
-                  ease: 'power2.out'
-                });
-              },
-              onLeave: () => {
-                gsap.to(feature, {
-                  scale: 1,
-                  duration: 0.3,
-                  ease: 'power2.out'
-                });
-              },
-              onEnterBack: () => {
-                gsap.to(feature, {
-                  scale: 1.02,
-                  duration: 0.3,
-                  ease: 'power2.out'
-                });
-              },
-              onLeaveBack: () => {
-                gsap.to(feature, {
-                  scale: 1,
-                  duration: 0.3,
-                  ease: 'power2.out'
-                });
-              }
-            });
-          }
-        });
-
-        // Numbers with rotation and scale
-        numberRefs.current.forEach((num, index) => {
-          if (num) {
-            gsap.from(num, {
-              scrollTrigger: {
-                trigger: num,
-                start: 'top 80%',
-                end: 'top 30%',
-                scrub: 2,
-              },
-              rotation: 180,
-              scale: 0,
-              opacity: 0,
-              ease: 'back.out'
-            });
-          }
-        });
-
-        // Icons with spring animation
-        iconRefs.current.forEach((icon, index) => {
-          if (icon) {
-            gsap.from(icon, {
-              scrollTrigger: {
-                trigger: icon,
-                start: 'top 80%',
-                end: 'top 40%',
-                scrub: 1,
-              },
-              scale: 0,
-              rotation: -180,
-              ease: 'elastic.out(1, 0.5)'
-            });
-
-            // Continuous rotation on scroll
-            gsap.to(icon, {
-              scrollTrigger: {
-                trigger: icon,
-                start: 'top 60%',
-                end: 'bottom 20%',
-                scrub: 2,
-              },
-              rotation: 360,
-            });
-          }
-        });
-
-        // Lines grow on scroll
-        lineRefs.current.forEach((line, index) => {
-          if (line) {
-            gsap.from(line, {
-              scrollTrigger: {
-                trigger: line,
-                start: 'top 85%',
-                end: 'top 50%',
-                scrub: 1.5,
-              },
-              scaleX: 0,
-              transformOrigin: 'left center',
-            });
-          }
-        });
-
-        // Floating orbs with parallax
-        if (orbRef.current) {
-          gsap.to(orbRef.current, {
+      // Features with complex animations
+      featuresRef.current.forEach((feature, index) => {
+        if (feature) {
+          // Feature container scale and fade
+          gsap.from(feature, {
             scrollTrigger: {
-              trigger: sectionRef.current,
-              start: 'top bottom',
-              end: 'bottom top',
+              trigger: feature,
+              start: 'top 90%',
+              end: 'top 40%',
               scrub: 1.5,
             },
-            y: -300,
-            x: 100,
-            rotation: 180,
-            scale: 1.5,
+            opacity: 0,
+            scale: 0.8,
+            x: index % 2 === 0 ? -100 : 100,
+            rotation: index % 2 === 0 ? -5 : 5,
+          });
+
+          // Pin each feature while scrolling
+          ScrollTrigger.create({
+            trigger: feature,
+            start: 'top 30%',
+            end: 'bottom 20%',
+            pin: false,
+            onEnter: () => {
+              gsap.to(feature, {
+                scale: 1.02,
+                duration: 0.3,
+                ease: 'power2.out'
+              });
+            },
+            onLeave: () => {
+              gsap.to(feature, {
+                scale: 1,
+                duration: 0.3,
+                ease: 'power2.out'
+              });
+            },
+            onEnterBack: () => {
+              gsap.to(feature, {
+                scale: 1.02,
+                duration: 0.3,
+                ease: 'power2.out'
+              });
+            },
+            onLeaveBack: () => {
+              gsap.to(feature, {
+                scale: 1,
+                duration: 0.3,
+                ease: 'power2.out'
+              });
+            }
           });
         }
+      });
 
-        if (orb2Ref.current) {
-          gsap.to(orb2Ref.current, {
+      // Numbers with rotation and scale
+      numberRefs.current.forEach((num, index) => {
+        if (num) {
+          gsap.from(num, {
             scrollTrigger: {
-              trigger: sectionRef.current,
-              start: 'top bottom',
-              end: 'bottom top',
+              trigger: num,
+              start: 'top 80%',
+              end: 'top 30%',
               scrub: 2,
             },
-            y: 400,
-            x: -150,
-            rotation: -180,
-            scale: 0.8,
+            rotation: 180,
+            scale: 0,
+            opacity: 0,
+            ease: 'back.out'
           });
         }
+      });
 
-        // Progress bar
-        if (progressRef.current) {
-          gsap.to(progressRef.current, {
+      // Icons with spring animation
+      iconRefs.current.forEach((icon, index) => {
+        if (icon) {
+          gsap.from(icon, {
             scrollTrigger: {
-              trigger: sectionRef.current,
-              start: 'top top',
-              end: 'bottom bottom',
-              scrub: 0.5,
-            },
-            scaleY: 1,
-            transformOrigin: 'top center',
-          });
-        }
-
-        // CTA with reveal
-        if (ctaRef.current) {
-          gsap.from(ctaRef.current, {
-            scrollTrigger: {
-              trigger: ctaRef.current,
-              start: 'top 90%',
-              end: 'top 50%',
+              trigger: icon,
+              start: 'top 80%',
+              end: 'top 40%',
               scrub: 1,
             },
-            opacity: 0,
-            y: 80,
-            scale: 0.8,
+            scale: 0,
+            rotation: -180,
+            ease: 'elastic.out(1, 0.5)'
+          });
+
+          // Continuous rotation on scroll
+          gsap.to(icon, {
+            scrollTrigger: {
+              trigger: icon,
+              start: 'top 60%',
+              end: 'bottom 20%',
+              scrub: 2,
+            },
+            rotation: 360,
           });
         }
-      };
-      
-      document.body.appendChild(gsapScript2);
-    };
-    
-    document.body.appendChild(script);
+      });
 
-    return () => {
-      if (window.ScrollTrigger) {
-        window.ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      // Lines grow on scroll
+      lineRefs.current.forEach((line, index) => {
+        if (line) {
+          gsap.from(line, {
+            scrollTrigger: {
+              trigger: line,
+              start: 'top 85%',
+              end: 'top 50%',
+              scrub: 1.5,
+            },
+            scaleX: 0,
+            transformOrigin: 'left center',
+          });
+        }
+      });
+
+      // Floating orbs with parallax
+      if (orbRef.current && sectionRef.current) {
+        gsap.to(orbRef.current, {
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.5,
+          },
+          y: -300,
+          x: 100,
+          rotation: 180,
+          scale: 1.5,
+        });
       }
-    };
-  }, []);
+
+      if (orb2Ref.current && sectionRef.current) {
+        gsap.to(orb2Ref.current, {
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 2,
+          },
+          y: 400,
+          x: -150,
+          rotation: -180,
+          scale: 0.8,
+        });
+      }
+
+      // Progress bar
+      if (progressRef.current && sectionRef.current) {
+        gsap.to(progressRef.current, {
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: 0.5,
+          },
+          scaleY: 1,
+          transformOrigin: 'top center',
+        });
+      }
+
+      // CTA with reveal
+      if (ctaRef.current) {
+        gsap.from(ctaRef.current, {
+          scrollTrigger: {
+            trigger: ctaRef.current,
+            start: 'top 90%',
+            end: 'top 50%',
+            scrub: 1,
+          },
+          opacity: 0,
+          y: 80,
+          scale: 0.8,
+        });
+      }
+
+      // Refresh ScrollTrigger to ensure proper calculations
+      ScrollTrigger.refresh();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [gsapReady]);
 
   return (
     <section ref={sectionRef} className="relative py-32 px-6 bg-white overflow-hidden">
