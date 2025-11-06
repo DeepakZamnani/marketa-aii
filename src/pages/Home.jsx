@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar'
 import Overview from '../components/Overview'
 import Features from '../components/Features'
 import LogoIntro from '../components/LogoIntro'
+import ComingSoon from '../components/ComingSoon'
 const Home = () => {
   const [showIntro, setShowIntro] = useState(true)
   const [startMainAnimation, setStartMainAnimation] = useState(false)
@@ -21,7 +22,8 @@ const Home = () => {
         {/* <Navbar/> */}
         <Hero/>
         {/* <Overview/> */}
-        <Features/>
+        {/* <Features/> */}
+        <ComingSoon/>
       </div>
     </div>
   )
