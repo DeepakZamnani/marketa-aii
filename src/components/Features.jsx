@@ -1254,7 +1254,7 @@ export default function Features() {
 
   const openApp = () => {
     //  window.location.href = '/coming-soon';
-    window.open('https://drive.google.com/drive/folders/1BZPJDS0nbiBByJv9-GHNb8M-eDeh3yyR?usp=sharing', '_blank', 'noopener,noreferrer');
+    window.open('https://drive.google.com/drive/folders/1Q0anJmd4FJKEeI5SbdbWXLBUZnUH8k27', '_blank', 'noopener,noreferrer');
   };
 
   return (
